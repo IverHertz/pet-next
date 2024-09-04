@@ -14,23 +14,16 @@ import {
     FormMessage,
 } from "@/components/ui/form"
 import {Input} from "@/components/ui/input"
-
-const formSchema = z.object({
-    email: z.string().email({
-        message: "Invalid email address.",
-    }),
-    password: z.string().min(8, {
-        message: "Password must be at least 8 characters.",
-    })
-})
+import {loginSchema} from "@/schema/account";
+import {login} from "@/actions";
 
 export default function LoginForm() {
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
+    const form = useForm<z.infer<typeof loginSchema>>({
+        resolver: zodResolver(loginSchema),
     })
 
-    function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log(values)
+    async function onSubmit(formData: z.infer<typeof loginSchema>) {
+        await login(formData)
     }
 
     return (
@@ -43,7 +36,7 @@ export default function LoginForm() {
                         <FormItem>
                             <FormLabel>邮箱</FormLabel>
                             <FormControl>
-                                <Input placeholder="请输入邮箱" {...field} />
+                                <Input placeholder="请输入邮箱" type="email" {...field} />
                             </FormControl>
                             <FormMessage/>
                         </FormItem>
@@ -57,7 +50,7 @@ export default function LoginForm() {
                         <FormItem>
                             <FormLabel>密码</FormLabel>
                             <FormControl>
-                                <Input placeholder="请输入密码" {...field} />
+                                <Input placeholder="请输入密码" type="password" {...field} />
                             </FormControl>
                             <FormMessage/>
                         </FormItem>
