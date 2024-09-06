@@ -15,7 +15,7 @@ import Image from "next/image";
 export default function Home() {
     return (
         <main className="w-full min-h-screen lg:grid lg:grid-cols-2">
-            <Image className="object-cover h-full" src="/login-side.png" alt="login-side" width={1280} height={1280}/>
+            <Image className="object-cover h-full" src="/login-side.png" alt="login-side" priority width={1280} height={1280}/>
 
             <div className="flex justify-center items-center">
                 <div className="space-y-4">

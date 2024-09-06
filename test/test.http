@@ -1,0 +1,8 @@
+### POST /account/register
+POST {{base}}/account/register
+Content-Type: application/json
+
+{
+  "email": "t@jazee.top",
+  "password": "jaze.top"
+}

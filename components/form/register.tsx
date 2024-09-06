@@ -15,14 +15,19 @@ import {
 } from "@/components/ui/form"
 import {Input} from "@/components/ui/input"
 import {loginSchema} from "@/schema/account";
+import {Fetch} from "@/lib/fetch";
 
 export default function RegisterForm() {
     const form = useForm<z.infer<typeof loginSchema>>({
+        defaultValues: {
+            email: "",
+            password: "",
+        },
         resolver: zodResolver(loginSchema),
     })
 
     function onSubmit(values: z.infer<typeof loginSchema>) {
-        console.log(values)
+        Fetch.post('/account/register', values)
     }
 
     return (

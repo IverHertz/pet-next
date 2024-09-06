@@ -15,15 +15,21 @@ import {
 } from "@/components/ui/form"
 import {Input} from "@/components/ui/input"
 import {loginSchema} from "@/schema/account";
-import {login} from "@/actions";
+import {useSearchParams} from 'next/navigation'
 
 export default function LoginForm() {
+    const searchParams = useSearchParams()
+
     const form = useForm<z.infer<typeof loginSchema>>({
+        defaultValues: {
+            email: "",
+            password: "",
+        },
         resolver: zodResolver(loginSchema),
     })
 
     async function onSubmit(formData: z.infer<typeof loginSchema>) {
-        await login(formData)
+
     }
 
     return (

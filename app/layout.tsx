@@ -1,6 +1,8 @@
 import type {Metadata} from "next";
 import "./globals.css";
 import React from "react";
+import {Toaster} from "react-hot-toast";
+import {TooltipProvider} from "@/components/ui/tooltip"
 
 export const metadata: Metadata = {
     title: "宠物领养管理系统 by Jazee",
@@ -14,7 +16,14 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="zh">
-        <body>{children}</body>
+        <body>
+        
+        <Toaster/>
+        <TooltipProvider>
+            {children}
+        </TooltipProvider>
+
+        </body>
         </html>
     );
 }
