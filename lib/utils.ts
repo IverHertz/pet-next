@@ -1,21 +1,23 @@
 import {clsx, type ClassValue} from "clsx"
 import {twMerge} from "tailwind-merge"
 import {NextResponse} from "next/server";
+import bcrypt from 'bcryptjs';
+import * as jose from 'jose'
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs))
 }
 
-export interface ResponseData {
+export interface ResponseData<T = unknown> {
     code: Code
     message: typeof Message[keyof typeof Message]
-    data?: unknown
+    data: T
 }
 
 export const successResponse = (data?: unknown): NextResponse => NextResponse.json({
     code: Code.SUCCESS,
     message: Message[Code.SUCCESS],
-    data
+    data: data ?? null
 })
 
 export enum Code {
@@ -33,8 +35,38 @@ const Message = {
 
 const getErrorMessage = (code: Code): string => Message[code]
 
-export const errorResponse = (code: Code, data?: unknown): NextResponse => NextResponse.json({
+export const bizErrResponse = (code: Code, data?: unknown): NextResponse => NextResponse.json({
     code,
     message: getErrorMessage(code),
-    data
+    data: data ?? null
 })
+
+export const pwHash = (pw: string) => new Promise<string>((resolve, reject) => {
+    bcrypt.hash(pw, 10, (err, hash) => {
+        if (err) {
+            reject(err)
+        } else {
+            resolve(hash)
+        }
+    });
+})
+
+export const pwCompare = (pw: string, hash: string) => new Promise<boolean>((resolve, reject) => {
+    bcrypt.compare(pw, hash).then(resolve).catch(reject)
+})
+
+const alg = 'HS256'
+const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET)
+
+export const jwtSign = async (payload: {}) => {
+    return await new jose.SignJWT(payload)
+        .setProtectedHeader({alg})
+        .setExpirationTime('1m')
+        .sign(JWT_SECRET)
+}
+
+export const jwtVerify = async (jwt: string) => {
+    return await jose.jwtVerify<{
+        email: string
+    }>(jwt, JWT_SECRET)
+}

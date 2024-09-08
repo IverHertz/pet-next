@@ -15,10 +15,13 @@ import {
 } from "@/components/ui/form"
 import {Input} from "@/components/ui/input"
 import {loginSchema} from "@/schema/account";
-import {useSearchParams} from 'next/navigation'
+import {useRouter, useSearchParams} from 'next/navigation'
+import {Fetch} from "@/lib/fetch";
+import toast from "react-hot-toast";
 
 export default function LoginForm() {
     const searchParams = useSearchParams()
+    const router = useRouter()
 
     const form = useForm<z.infer<typeof loginSchema>>({
         defaultValues: {
@@ -28,8 +31,11 @@ export default function LoginForm() {
         resolver: zodResolver(loginSchema),
     })
 
-    async function onSubmit(formData: z.infer<typeof loginSchema>) {
-
+    async function onSubmit(values: z.infer<typeof loginSchema>) {
+        Fetch.post('/account/login', values).then(() => {
+            toast.success('登录成功')
+            router.replace(searchParams.get('redirect') ?? '/admin')
+        })
     }
 
     return (

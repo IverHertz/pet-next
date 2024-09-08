@@ -1,21 +1,24 @@
 import {NextRequest, NextResponse} from "next/server";
 import {registerSchema} from "@/schema/account";
 import {createUser, isEmailExist} from "@/lib/data";
-import {errorResponse} from "@/lib/utils";
-import {signIn} from "@/auth";
+import {bizErrResponse, jwtSign, pwHash, successResponse} from "@/lib/utils";
 import {Code} from "@/lib/utils";
+import {cookies} from "next/headers";
 
 export async function POST(request: NextRequest) {
     const data = await request.json()
     const {email, password} = registerSchema.parse(data)
     const user = await isEmailExist(email)
     if (user) {
-        return errorResponse(Code.USER_EXIST)
+        return bizErrResponse(Code.USER_EXIST)
     }
-    const res = await createUser(email, password)
+    const res = await createUser(email, await pwHash(password))
     if (res.acknowledged) {
-        await signIn("credentials", {redirectTo: "/admin", email, password})
-        return
+        cookies().set('token', await jwtSign({email}), {
+            httpOnly: true,
+            maxAge: 60 * 60 * 24 * 30,
+        })
+        return successResponse()
     }
     return NextResponse.error()
 }

@@ -16,8 +16,13 @@ import {
 import {Input} from "@/components/ui/input"
 import {loginSchema} from "@/schema/account";
 import {Fetch} from "@/lib/fetch";
+import toast from "react-hot-toast";
+import {useRouter, useSearchParams} from "next/navigation";
 
 export default function RegisterForm() {
+    const router = useRouter()
+    const searchParams = useSearchParams()
+
     const form = useForm<z.infer<typeof loginSchema>>({
         defaultValues: {
             email: "",
@@ -27,7 +32,10 @@ export default function RegisterForm() {
     })
 
     function onSubmit(values: z.infer<typeof loginSchema>) {
-        Fetch.post('/account/register', values)
+        Fetch.post('/account/register', values).then(() => {
+            toast.success('注册成功')
+            router.replace(searchParams.get('redirect') ?? '/admin')
+        })
     }
 
     return (
