@@ -30,7 +30,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import {usePathname} from "next/navigation";
-import {useEffect, useMemo, useState} from "react";
+import {Fragment, useEffect, useMemo, useState} from "react";
 
 const ITEMS_TO_DISPLAY = 3
 
@@ -58,7 +58,7 @@ export function BreadcrumbResponsive() {
     const items = useMemo(() => (
         pathname.split("/").filter(Boolean).map((item, index, array) => (
                 {
-                    href: array.slice(0, index + 1).join("/"),
+                    href: '/' + array.slice(0, index + 1).join("/"),
                     label: item,
                 }
             )
@@ -126,22 +126,25 @@ export function BreadcrumbResponsive() {
                 ) : null}
 
                 {items.slice(-ITEMS_TO_DISPLAY + 1).map((item, index) => (
-                    <BreadcrumbItem key={index}>
-                        {item.href ? (
-                            <>
-                                <BreadcrumbLink
-                                    asChild
-                                    className="max-w-20 truncate md:max-w-none"
-                                >
-                                    <Link href={item.href}>{item.label}</Link>
-                                </BreadcrumbLink>
-                            </>
-                        ) : (
-                            <BreadcrumbPage className="max-w-20 truncate md:max-w-none">
-                                {item.label}
-                            </BreadcrumbPage>
-                        )}
-                    </BreadcrumbItem>
+                    <Fragment key={index}>
+                        <BreadcrumbItem key={index}>
+                            {item.href ? (
+                                <>
+                                    <BreadcrumbLink
+                                        asChild
+                                        className="max-w-20 truncate md:max-w-none"
+                                    >
+                                        <Link href={item.href}>{item.label}</Link>
+                                    </BreadcrumbLink>
+                                </>
+                            ) : (
+                                <BreadcrumbPage className="max-w-20 truncate md:max-w-none">
+                                    {item.label}
+                                </BreadcrumbPage>
+                            )}
+                        </BreadcrumbItem>
+                        {index < items.length - 1 && <BreadcrumbSeparator/>}
+                    </Fragment>
                 ))}
             </BreadcrumbList>
         </Breadcrumb>

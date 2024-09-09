@@ -23,7 +23,11 @@ export const successResponse = (data?: unknown): NextResponse => NextResponse.js
 export enum Code {
     SUCCESS = 0,
     USER_EXIST = 1001,
-    USER_WRONG_CREDENTIALS
+    USER_WRONG_CREDENTIALS,
+    USER_ALREADY_APPLY,
+    USER_PERMISSION_DENIED = 1004,
+
+    OTHER = 9999,
 }
 
 const Message = {
@@ -31,6 +35,26 @@ const Message = {
 
     [Code.USER_EXIST]: "User already exists.",
     [Code.USER_WRONG_CREDENTIALS]: "Wrong email or password.",
+    [Code.USER_ALREADY_APPLY]: "User already applied.",
+    [Code.USER_PERMISSION_DENIED]: "Permission denied.",
+
+    [Code.OTHER]: "Other error.",
+}
+
+const ZH_Message = {
+    [Code.SUCCESS]: "成功",
+
+    [Code.USER_EXIST]: "用户已存在",
+    [Code.USER_WRONG_CREDENTIALS]: "邮箱或密码错误",
+    [Code.USER_ALREADY_APPLY]: "用户已申请",
+    [Code.USER_PERMISSION_DENIED]: "权限不足",
+
+    [Code.OTHER]: "其他错误",
+}
+
+export const Messages = {
+    'en': Message,
+    'zh': ZH_Message,
 }
 
 const getErrorMessage = (code: Code): string => Message[code]
@@ -61,12 +85,13 @@ const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET)
 export const jwtSign = async (payload: {}) => {
     return await new jose.SignJWT(payload)
         .setProtectedHeader({alg})
-        .setExpirationTime('1m')
+        .setExpirationTime('30d')
         .sign(JWT_SECRET)
 }
 
 export const jwtVerify = async (jwt: string) => {
     return await jose.jwtVerify<{
-        email: string
+        id: string
+        role: string
     }>(jwt, JWT_SECRET)
 }

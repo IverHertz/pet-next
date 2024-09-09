@@ -6,17 +6,12 @@ export const middleware = async (request: NextRequest) => {
     if (!token) {
         return NextResponse.redirect(new URL('/', request.url))
     }
-    const {payload} = await jwtVerify(token.value)
-    if (!payload) {
+    try {
+        await jwtVerify(token.value)
+    } catch (e) {
         return NextResponse.redirect(new URL('/', request.url))
     }
-    const newHeaders = new Headers(request.headers)
-    newHeaders.set('x-user', payload.email)
-    return NextResponse.next({
-        request: {
-            headers: newHeaders
-        }
-    })
+    return NextResponse.next()
 }
 
 export const config = {

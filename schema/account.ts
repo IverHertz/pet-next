@@ -17,3 +17,9 @@ export const registerSchema = z.object({
         message: "Password must be at least 8 characters.",
     })
 })
+
+export const volunteerApplySchema = z.object({
+    reason: z.string().min(1, {
+        message: "Reason must be at least 1 characters.",
+    }),
+})

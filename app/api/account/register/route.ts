@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
     }
     const res = await createUser(email, await pwHash(password))
     if (res.acknowledged) {
-        cookies().set('token', await jwtSign({email}), {
+        cookies().set('token', await jwtSign({id: res.insertedId.toHexString(), role: 'user'}), {
             httpOnly: true,
             maxAge: 60 * 60 * 24 * 30,
         })

@@ -33,7 +33,7 @@ export default function LoginForm() {
 
     async function onSubmit(values: z.infer<typeof loginSchema>) {
         Fetch.post('/account/login', values).then(() => {
-            toast.success('登录成功')
+            toast.success('登录成功', {icon: '🎉'})
             router.replace(searchParams.get('redirect') ?? '/admin')
         })
     }

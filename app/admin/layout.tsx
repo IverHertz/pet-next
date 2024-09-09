@@ -22,10 +22,10 @@ import {
     TooltipContent,
     TooltipTrigger,
 } from "@/components/ui/tooltip"
-import React from "react";
+import {ReactNode} from "react";
 import {BreadcrumbResponsive} from "@/components/client/breadcrumb";
 
-export default function Dashboard({children}: { children: React.ReactNode }) {
+export default function Dashboard({children}: { children: ReactNode }) {
 
     return (
         <div className="flex min-h-screen w-full flex-col bg-muted/40">
@@ -36,7 +36,6 @@ export default function Dashboard({children}: { children: React.ReactNode }) {
                         className="group flex h-9 w-9 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:h-8 md:w-8 md:text-base"
                     >
                         <Package2 className="h-4 w-4 transition-all group-hover:scale-110"/>
-                        <span className="sr-only">Acme Inc</span>
                     </Link>
 
                     <Tooltip>
@@ -103,7 +102,7 @@ export default function Dashboard({children}: { children: React.ReactNode }) {
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                            <DropdownMenuLabel>MJ</DropdownMenuLabel>
+                            <DropdownMenuLabel>Hello</DropdownMenuLabel>
                             <DropdownMenuSeparator/>
                             <DropdownMenuItem>
                                 <Link href={"/admin/user"} className="w-full">
@@ -111,13 +110,17 @@ export default function Dashboard({children}: { children: React.ReactNode }) {
                                 </Link>
                             </DropdownMenuItem>
                             <DropdownMenuSeparator/>
-                            <DropdownMenuItem>登出</DropdownMenuItem>
+                            <DropdownMenuItem>
+                                <Link href={"/api/account/sign-out"} className="w-full">
+                                    登出
+                                </Link>
+                            </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </header>
 
                 <main
-                    className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8 lg:grid-cols-3 xl:grid-cols-3">
+                    className="px-6 space-y-4">
                     {children}
                 </main>
             </div>
