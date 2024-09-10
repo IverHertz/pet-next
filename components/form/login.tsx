@@ -18,10 +18,12 @@ import {loginSchema} from "@/schema/account";
 import {useRouter, useSearchParams} from 'next/navigation'
 import {Fetch} from "@/lib/fetch";
 import toast from "react-hot-toast";
+import {useState} from "react";
 
 export default function LoginForm() {
     const searchParams = useSearchParams()
     const router = useRouter()
+    const [disabled, setDisabled] = useState(false)
 
     const form = useForm<z.infer<typeof loginSchema>>({
         defaultValues: {
@@ -32,9 +34,12 @@ export default function LoginForm() {
     })
 
     async function onSubmit(values: z.infer<typeof loginSchema>) {
+        setDisabled(true)
         Fetch.post('/account/login', values).then(() => {
             toast.success('登录成功', {icon: '🎉'})
             router.replace(searchParams.get('redirect') ?? '/admin')
+        }).finally(() => {
+            setDisabled(false)
         })
     }
 
@@ -68,7 +73,7 @@ export default function LoginForm() {
                         </FormItem>
                     )}
                 />
-                <Button type="submit">登录</Button>
+                <Button type="submit" disabled={disabled}>登录</Button>
             </form>
         </Form>
     )

@@ -7,7 +7,7 @@ export interface Accounts {
     email: string
     password: string
     role: string
-    status?: string
+    status?: 'pending' | 'approved' | 'rejected'
 }
 
 export const accounts = db.collection<Accounts>("accounts")
@@ -19,6 +19,16 @@ export interface VolunteerApply {
 }
 
 export const volunteer_apply = db.collection<VolunteerApply>("volunteer_apply")
+
+export interface Pets {
+    name: string
+    age: number
+    type: 'CAT' | 'DOG' | 'MUROID' | 'MUSTELID' | 'OTHER'
+    info?: string
+    created_at: Date
+}
+
+export const pets = db.collection<Pets>("pets")
 
 export const getUserWithEmail = (email: string) => {
     return accounts.findOne({email})

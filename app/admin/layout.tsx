@@ -1,8 +1,9 @@
 import Image from "next/image"
 import Link from "next/link"
 import {
+    Cat,
     Home,
-    Package2,
+    Package2, PawPrint,
     Search,
     Settings,
 } from "lucide-react"
@@ -41,14 +42,40 @@ export default function Dashboard({children}: { children: ReactNode }) {
                     <Tooltip>
                         <TooltipTrigger asChild>
                             <Link
-                                href="#"
-                                className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent text-accent-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
+                                href="/admin"
+                                className="flex h-9 w-9 items-center justify-center rounded-lg hover:bg-accent text-accent-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
                             >
                                 <Home className="h-5 w-5"/>
-                                <span className="sr-only">Dashboard</span>
+                                <span className="sr-only">主页</span>
                             </Link>
                         </TooltipTrigger>
-                        <TooltipContent side="right">Dashboard</TooltipContent>
+                        <TooltipContent side="right">主页</TooltipContent>
+                    </Tooltip>
+
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <Link
+                                href="/admin/pets"
+                                className="flex h-9 w-9 items-center justify-center rounded-lg hover:bg-accent text-accent-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
+                            >
+                                <Cat className="h-5 w-5"/>
+                                <span className="sr-only">宠物</span>
+                            </Link>
+                        </TooltipTrigger>
+                        <TooltipContent side="right">宠物</TooltipContent>
+                    </Tooltip>
+
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <Link
+                                href="/admin/adoption"
+                                className="flex h-9 w-9 items-center justify-center rounded-lg hover:bg-accent text-accent-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
+                            >
+                                <PawPrint className="h-5 w-5"/>
+                                <span className="sr-only">领养</span>
+                            </Link>
+                        </TooltipTrigger>
+                        <TooltipContent side="right">领养</TooltipContent>
                     </Tooltip>
 
                 </nav>

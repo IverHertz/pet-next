@@ -18,10 +18,12 @@ import {loginSchema} from "@/schema/account";
 import {Fetch} from "@/lib/fetch";
 import toast from "react-hot-toast";
 import {useRouter, useSearchParams} from "next/navigation";
+import {useState} from "react";
 
 export default function RegisterForm() {
     const router = useRouter()
     const searchParams = useSearchParams()
+    const [disabled, setDisabled] = useState(false)
 
     const form = useForm<z.infer<typeof loginSchema>>({
         defaultValues: {
@@ -32,9 +34,12 @@ export default function RegisterForm() {
     })
 
     function onSubmit(values: z.infer<typeof loginSchema>) {
+        setDisabled(true)
         Fetch.post('/account/register', values).then(() => {
             toast.success('注册成功')
             router.replace(searchParams.get('redirect') ?? '/admin')
+        }).finally(() => {
+            setDisabled(false)
         })
     }
 
@@ -68,7 +73,7 @@ export default function RegisterForm() {
                         </FormItem>
                     )}
                 />
-                <Button type="submit">注册</Button>
+                <Button type="submit" disabled={disabled}>注册</Button>
             </form>
         </Form>
     )
