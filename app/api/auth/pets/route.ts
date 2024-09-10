@@ -9,7 +9,9 @@ export async function GET(request: NextRequest) {
         return NextResponse.error()
     }
 
-    const res = await pets.find().toArray()
+    const res = await pets.find().sort({
+        created_at: -1
+    }).toArray()
     return successResponse(res)
 }
 
@@ -20,6 +22,6 @@ export async function POST(request: NextRequest) {
     }
 
     const {name, age, type, info} = await request.json()
-    await pets.insertOne({name, age, type, info})
+    await pets.insertOne({name, age, type, info, created_at: new Date()})
     return successResponse()
 }

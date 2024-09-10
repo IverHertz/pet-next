@@ -61,15 +61,10 @@ const Client = () => {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         const formData = new FormData(e.currentTarget)
-        const reason = formData.get('reason') as string
+        const data = Object.fromEntries(formData.entries())
 
-        if (!reason) {
-            toast.error('请填写申请理由')
-            return
-        }
-
-        Fetch.post('/auth/vol_apply', {reason}).then(() => {
-            toast.success('申请成功')
+        Fetch.post('/auth/pets', data).then(() => {
+            toast.success('添加成功')
             setOpen(false)
             mutate()
         })
@@ -92,7 +87,7 @@ const Client = () => {
                         <div className="grid gap-4 py-4">
                             <div className='space-y-4'>
                                 {
-                                    CreatePetForm.map(({label, name, type, placeholder,required=false}) => (
+                                    CreatePetForm.map(({label, name, type, placeholder, required = false}) => (
                                         <div key={name} className="grid grid-cols-6 items-center gap-4">
                                             <Label htmlFor={name} className="text-right">
                                                 {label}
@@ -116,11 +111,12 @@ const Client = () => {
                     </form>
                 </DialogContent>
             </Dialog>
+
             <Table className='bg-background rounded-xl'>
                 <TableCaption>宠物列表</TableCaption>
                 <TableHeader>
                     <TableRow>
-                        <TableHead className="w-[100px]">申请ID</TableHead>
+                        <TableHead className="w-[100px]">宠物ID</TableHead>
                         <TableHead>名字</TableHead>
                         <TableHead>年龄</TableHead>
                         <TableHead>类型</TableHead>
@@ -137,8 +133,7 @@ const Client = () => {
                             <TableCell>{age}</TableCell>
                             <TableCell>{type}</TableCell>
                             <TableCell>{info}</TableCell>
-                            <TableCell
-                                className="text-right">{new Date(created_at).toLocaleDateString()}</TableCell>
+                            <TableCell>{new Date(created_at).toLocaleDateString()}</TableCell>
                             <TableCell className='space-x-2'>
                                 <Button onClick={() => handleAdopt()}>
                                     通过
