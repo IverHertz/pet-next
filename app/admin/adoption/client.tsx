@@ -24,6 +24,7 @@ const Audit = () => {
     const {data: adoptionList, mutate} = useSWR<WithId<{
         _id: string
         pet: {
+            _id: string
             name: string
         }
         user: {
@@ -33,16 +34,67 @@ const Audit = () => {
         created_at: string
     }[]>>('/auth/pets/adoption/audit', Fetch.get)
 
-    const handleApprove = (adoption_id: string) => {
-        Fetch.post('/auth/pets/adoption/audit', {adoption_id, action: 'approve'}).then(async () => {
+    const [open, setOpen] = useState(false)
+    const [pet_id, setPet_id] = useState('')
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
+        const form = e.currentTarget as HTMLFormElement
+        const formData = new FormData(form)
+        const reason = formData.get('reason') as string
+        Fetch.post('/auth/pets/adoption/audit', {pet_id, action: 'reject', reason}).then(async () => {
+            toast.success('拒绝成功')
+            await mutate()
+            setOpen(false)
+        })
+    }
+
+    const handleApprove = (pet_id: string) => {
+        Fetch.post('/auth/pets/adoption/audit', {pet_id, action: 'approve'}).then(async () => {
             toast.success('通过成功')
             await mutate()
         })
     }
 
+    const handleReject = (adoption_id: string) => {
+        setOpen(true)
+        setPet_id(adoption_id)
+    }
+
     return (
         <>
             <h1 className='font-bold text-2xl'>宠物领养审核😺🐕</h1>
+
+            <Dialog open={open} onOpenChange={setOpen}>
+                <DialogContent className="sm:max-w-[425px]">
+                    <form onSubmit={handleSubmit}>
+                        <DialogHeader>
+                            <DialogTitle>拒绝理由</DialogTitle>
+                            <DialogDescription>
+                                请填写拒绝理由
+                            </DialogDescription>
+                        </DialogHeader>
+                        <div className="grid gap-4 py-4">
+                            <div className="grid grid-cols-4 items-center gap-4">
+                                <Label htmlFor="reason" className="text-right">
+                                    拒绝理由
+                                </Label>
+                                <Input
+                                    id="reason"
+                                    name='reason'
+                                    defaultValue=""
+                                    className="col-span-3"
+                                    required
+                                />
+                            </div>
+                        </div>
+                        <DialogFooter>
+                            <Button type="submit">提交</Button>
+                        </DialogFooter>
+                    </form>
+                </DialogContent>
+            </Dialog>
+
             <Table className='bg-background rounded-xl'>
                 <TableCaption>宠物领养申请列表</TableCaption>
                 <TableHeader>
@@ -66,8 +118,12 @@ const Audit = () => {
                             <TableCell className='space-x-2 w-64'>
 
                                 <Button
-                                    onClick={() => handleApprove(_id.toString())}>
+                                    onClick={() => handleApprove(pet._id.toString())}>
                                     同意
+                                </Button>
+
+                                <Button variant='outline' onClick={() => handleReject(pet._id.toString())}>
+                                    拒绝
                                 </Button>
 
                             </TableCell>

@@ -44,6 +44,7 @@ export async function GET(request: NextRequest) {
                 status: 1,
                 reason: 1,
                 created_at: 1,
+                'pet._id': 1,
                 'pet.name': 1,
                 'pet.age': 1,
                 'pet.type': 1,
@@ -63,14 +64,14 @@ export async function POST(request: NextRequest) {
         return NextResponse.error()
     }
     const {role} = payload
-
     if (role !== 'admin') {
         return bizErrResponse(Code.USER_PERMISSION_DENIED)
     }
-    const {pet_id, action} = await request.json()
+
+    const {pet_id, action, reason} = await request.json()
     if (action === 'approve') {
         await adoption.updateOne({
-            _id: new ObjectId(pet_id as string)
+            pet_id: new ObjectId(pet_id as string)
         }, {
             $set: {
                 status: 'approved'
@@ -84,9 +85,8 @@ export async function POST(request: NextRequest) {
             }
         })
     } else if (action === 'reject') {
-        const {reason} = await request.json()
         await adoption.updateOne({
-            _id: new ObjectId(pet_id as string)
+            pet_id: new ObjectId(pet_id as string)
         }, {
             $set: {
                 status: 'rejected',
@@ -101,4 +101,5 @@ export async function POST(request: NextRequest) {
             }
         })
     }
+    return successResponse()
 }
