@@ -23,6 +23,10 @@ const Client = () => {
             }
 
             {
+                user.role === 'admin' && <h1 className='font-bold text-xl'>志愿者审核</h1>
+            }
+
+            {
                 user.role === 'admin' && <ApplyList/>
             }
         </>

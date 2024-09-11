@@ -27,6 +27,8 @@ export enum Code {
     USER_ALREADY_APPLY,
     USER_PERMISSION_DENIED = 1004,
 
+    PET_NOT_FOUND = 2001,
+
     OTHER = 9999,
 }
 
@@ -38,6 +40,8 @@ const Message = {
     [Code.USER_ALREADY_APPLY]: "User already applied.",
     [Code.USER_PERMISSION_DENIED]: "Permission denied.",
 
+    [Code.PET_NOT_FOUND]: "Pet not found.",
+
     [Code.OTHER]: "Other error.",
 }
 
@@ -48,6 +52,8 @@ const ZH_Message = {
     [Code.USER_WRONG_CREDENTIALS]: "邮箱或密码错误",
     [Code.USER_ALREADY_APPLY]: "用户已申请",
     [Code.USER_PERMISSION_DENIED]: "权限不足",
+
+    [Code.PET_NOT_FOUND]: "宠物未找到",
 
     [Code.OTHER]: "其他错误",
 }

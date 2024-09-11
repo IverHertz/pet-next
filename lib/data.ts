@@ -21,14 +21,27 @@ export interface VolunteerApply {
 export const volunteer_apply = db.collection<VolunteerApply>("volunteer_apply")
 
 export interface Pets {
+    user_id: ObjectId
     name: string
     age: number
-    type: 'CAT' | 'DOG' | 'MUROID' | 'MUSTELID' | 'OTHER'
+    type: string
     info?: string
+    status: 'pending' | 'approved' | 'rejected'
+    reason?: string
     created_at: Date
 }
 
 export const pets = db.collection<Pets>("pets")
+
+export interface Adoption {
+    user_id: ObjectId
+    pet_id: ObjectId
+    created_at: Date
+    status: 'pending' | 'approved' | 'rejected'
+    reason?: string
+}
+
+export const adoption = db.collection<Adoption>("adoption")
 
 export const getUserWithEmail = (email: string) => {
     return accounts.findOne({email})

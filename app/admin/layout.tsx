@@ -2,7 +2,7 @@ import Image from "next/image"
 import Link from "next/link"
 import {
     Cat,
-    Home,
+    Home, InfoIcon,
     Package2, PawPrint,
     Search,
     Settings,
@@ -59,10 +59,10 @@ export default function Dashboard({children}: { children: ReactNode }) {
                                 className="flex h-9 w-9 items-center justify-center rounded-lg hover:bg-accent text-accent-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
                             >
                                 <Cat className="h-5 w-5"/>
-                                <span className="sr-only">宠物</span>
+                                <span className="sr-only">提交宠物</span>
                             </Link>
                         </TooltipTrigger>
-                        <TooltipContent side="right">宠物</TooltipContent>
+                        <TooltipContent side="right">提交宠物</TooltipContent>
                     </Tooltip>
 
                     <Tooltip>
@@ -76,6 +76,19 @@ export default function Dashboard({children}: { children: ReactNode }) {
                             </Link>
                         </TooltipTrigger>
                         <TooltipContent side="right">领养</TooltipContent>
+                    </Tooltip>
+
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <Link
+                                href="/admin/audit"
+                                className="flex h-9 w-9 items-center justify-center rounded-lg hover:bg-accent text-accent-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
+                            >
+                                <InfoIcon className="h-5 w-5"/>
+                                <span className="sr-only">审核</span>
+                            </Link>
+                        </TooltipTrigger>
+                        <TooltipContent side="right">审核</TooltipContent>
                     </Tooltip>
 
                 </nav>
