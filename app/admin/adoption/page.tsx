@@ -1,5 +1,5 @@
 import React from 'react';
-import Client from "@/app/admin/pets/client";
+import Client from "@/app/admin/adoption/client";
 
 const Page = () => {
     return (

@@ -29,6 +29,8 @@ export enum Code {
 
     PET_NOT_FOUND = 2001,
 
+    ADOPTION_ALREADY_APPLY = 3001,
+
     OTHER = 9999,
 }
 
@@ -42,6 +44,8 @@ const Message = {
 
     [Code.PET_NOT_FOUND]: "Pet not found.",
 
+    [Code.ADOPTION_ALREADY_APPLY]: "Adoption already applied.",
+
     [Code.OTHER]: "Other error.",
 }
 
@@ -54,6 +58,8 @@ const ZH_Message = {
     [Code.USER_PERMISSION_DENIED]: "权限不足",
 
     [Code.PET_NOT_FOUND]: "宠物未找到",
+
+    [Code.ADOPTION_ALREADY_APPLY]: "领养已申请过了",
 
     [Code.OTHER]: "其他错误",
 }

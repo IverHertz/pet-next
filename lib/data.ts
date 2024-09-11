@@ -6,7 +6,7 @@ const db = client.db("pet")
 export interface Accounts {
     email: string
     password: string
-    role: string
+    role: 'user' | 'admin'
     status?: 'pending' | 'approved' | 'rejected'
 }
 
@@ -26,7 +26,7 @@ export interface Pets {
     age: number
     type: string
     info?: string
-    status: 'pending' | 'approved' | 'rejected'
+    status: 'pending' | 'approved' | 'rejected' | 'adopted' | 'adopt-pending'
     reason?: string
     created_at: Date
 }
@@ -39,6 +39,7 @@ export interface Adoption {
     created_at: Date
     status: 'pending' | 'approved' | 'rejected'
     reason?: string
+    rejected_reason?: string
 }
 
 export const adoption = db.collection<Adoption>("adoption")

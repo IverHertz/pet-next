@@ -176,7 +176,7 @@ const Client = () => {
                         <TableRow key={_id.toString()}>
                             <TableCell className="font-medium">{_id.toString()}</TableCell>
                             <TableCell>{
-                                status === 'pending' ? '待审核' : status === 'approved' ? '已通过' :
+                                status === 'pending' ? '待审核' : status === 'approved' ? '已通过' : status === 'rejected' ?
                                     <div className='flex items-center space-x-1'>
                                         <span className='text-red-700'>已拒绝</span>
                                         <Tooltip>
@@ -187,7 +187,7 @@ const Client = () => {
                                                 拒绝原因：{reason}
                                             </TooltipContent>
                                         </Tooltip>
-                                    </div>
+                                    </div> : status === 'adopted' ? '已领养' : '领养中'
                             }</TableCell>
                             <TableCell>{name}</TableCell>
                             <TableCell>{age}</TableCell>
