@@ -7,7 +7,6 @@ import {Accounts} from "@/lib/data";
 import {Skeleton} from "@/components/ui/skeleton";
 import {ApplyList, User} from "@/app/admin/components/client";
 import {Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
-import {Button} from "@/components/ui/button";
 import React from "react";
 import {Tooltip, TooltipContent, TooltipTrigger} from "@/components/ui/tooltip";
 import {InfoIcon} from "lucide-react";

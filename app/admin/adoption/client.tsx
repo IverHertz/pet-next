@@ -7,7 +7,7 @@ import {Fetch} from "@/lib/fetch";
 import toast from "react-hot-toast";
 import {Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import {Button} from "@/components/ui/button";
-import {Accounts, Adoption, Pets} from "@/lib/data";
+import {Accounts, Pets} from "@/lib/data";
 import {Skeleton} from "@/components/ui/skeleton";
 import {
     Dialog,
