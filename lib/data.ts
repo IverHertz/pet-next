@@ -6,7 +6,7 @@ const db = client.db("pet")
 export interface Accounts {
     email: string
     password: string
-    role: 'user' | 'admin'
+    role: 'user' | 'admin' | 'volunteer'
     status?: 'pending' | 'approved' | 'rejected'
 }
 

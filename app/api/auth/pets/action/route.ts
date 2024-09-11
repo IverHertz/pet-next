@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
     }
     const {role} = payload
 
-    if (role !== 'admin') {
+    if (role === 'user') {
         return bizErrResponse(Code.USER_PERMISSION_DENIED)
     }
     const {pet_id, action, reason} = await request.json()

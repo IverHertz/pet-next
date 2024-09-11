@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
 
     const res = await pets.find({
         status: {
-            $in: ['approved', 'adopt-pending']
+            $in: ['approved', 'adopt-pending', 'adopted']
         }
     }).sort({
         created_at: -1
@@ -25,7 +25,21 @@ export async function POST(request: NextRequest) {
     if (!payload) {
         return NextResponse.error()
     }
-    const {id} = payload
+    const {id, role} = payload
+
+    if (role !== 'user') {
+        const {pet_id} = await request.json()
+
+        await pets.updateOne({
+            _id: new ObjectId(pet_id as string)
+        }, {
+            $set: {
+                status: 'adopted'
+            }
+        })
+
+        return successResponse()
+    }
 
     const {pet_id, reason} = await request.json()
     const res = await adoption.findOne({

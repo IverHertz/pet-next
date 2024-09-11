@@ -1,63 +1,68 @@
 'use client'
 
-import React, {useState} from 'react';
 import useSWR from "swr";
 import {WithId} from "mongodb";
 import {Fetch} from "@/lib/fetch";
+import React, {useState} from "react";
 import toast from "react-hot-toast";
-import {Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
-import {Button} from "@/components/ui/button";
-import {Accounts, Pets} from "@/lib/data";
-import {Skeleton} from "@/components/ui/skeleton";
 import {
     Dialog,
     DialogContent,
     DialogDescription,
     DialogFooter,
     DialogHeader,
-    DialogTitle,
+    DialogTitle
 } from "@/components/ui/dialog";
 import {Label} from "@/components/ui/label";
 import {Input} from "@/components/ui/input";
+import {Button} from "@/components/ui/button";
+import {Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 
-const Client = () => {
+const Audit = () => {
+    const {data: adoptionList, mutate} = useSWR<WithId<{
+        _id: string
+        pet: {
+            _id: string
+            name: string
+        }
+        user: {
+            email: string
+        }
+        reason: string
+        created_at: string
+    }[]>>('/auth/pets/adoption/audit', Fetch.get)
+
     const [open, setOpen] = useState(false)
-    const [pet_id, setPetId] = useState('')
-    const {data: applyList, mutate} = useSWR<WithId<Pets>[]>('/auth/pets/list', Fetch.get)
-    const {data: user} = useSWR<WithId<Accounts>>('/auth/user/info', Fetch.get)
-
-    const handleApprove = (pet_id: string) => {
-        Fetch.post('/auth/pets/action', {pet_id, action: 'approve'}).then(async () => {
-            toast.success('审核成功')
-            await mutate()
-        })
-    }
-
-    const handleReject = (pet_id: string) => {
-        setOpen(true)
-        setPetId(pet_id)
-    }
+    const [pet_id, setPet_id] = useState('')
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         const form = e.currentTarget as HTMLFormElement
         const formData = new FormData(form)
         const reason = formData.get('reason') as string
-        Fetch.post('/auth/pets/action', {pet_id, action: 'reject', reason}).then(async () => {
+        Fetch.post('/auth/pets/adoption/audit', {pet_id, action: 'reject', reason}).then(async () => {
             toast.success('拒绝成功')
             await mutate()
             setOpen(false)
         })
     }
 
-    if (!user) return <Skeleton/>
+    const handleApprove = (pet_id: string) => {
+        Fetch.post('/auth/pets/adoption/audit', {pet_id, action: 'approve'}).then(async () => {
+            toast.success('通过成功')
+            await mutate()
+        })
+    }
 
-    if (user.role === 'user') {
-        return <h1 className='font-bold text-2xl'>你不是管理员哦，不能审核</h1>
+    const handleReject = (adoption_id: string) => {
+        setOpen(true)
+        setPet_id(adoption_id)
     }
 
     return (
         <>
+            <h1 className='font-bold text-2xl'>宠物领养审核😺🐕</h1>
+
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogContent className="sm:max-w-[425px]">
                     <form onSubmit={handleSubmit}>
@@ -88,40 +93,34 @@ const Client = () => {
                 </DialogContent>
             </Dialog>
 
-            <h1 className='font-bold text-2xl'>宠物审核😺🐕</h1>
             <Table className='bg-background rounded-xl'>
-                <TableCaption>宠物列表</TableCaption>
+                <TableCaption>宠物领养申请列表</TableCaption>
                 <TableHeader>
                     <TableRow>
-                        <TableHead className="w-[100px]">宠物ID</TableHead>
-                        <TableHead>状态</TableHead>
-                        <TableHead>名字</TableHead>
-                        <TableHead>年龄</TableHead>
-                        <TableHead>类型</TableHead>
-                        <TableHead>备注</TableHead>
+                        <TableHead className="w-[100px]">申请ID</TableHead>
+                        <TableHead>宠物名</TableHead>
+                        <TableHead>用户</TableHead>
+                        <TableHead>理由</TableHead>
                         <TableHead>时间</TableHead>
                         <TableHead>操作</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {applyList && applyList.map(({_id, status, name, age, type, info, created_at}) => (
+                    {adoptionList && adoptionList.map(({_id, pet, user, reason, created_at}) => (
                         <TableRow key={_id.toString()}>
                             <TableCell className="font-medium">{_id.toString()}</TableCell>
-                            <TableCell>{
-                                status === 'pending' ? '待审核' : status === 'approved' ? '已通过' :
-                                    <span className='text-red-700'>已拒绝</span>
-                            }</TableCell>
-                            <TableCell>{name}</TableCell>
-                            <TableCell>{age}</TableCell>
-                            <TableCell>{type}</TableCell>
-                            <TableCell>{info}</TableCell>
+                            <TableCell>{pet.name}</TableCell>
+                            <TableCell>{user.email}</TableCell>
+                            <TableCell>{reason}</TableCell>
                             <TableCell>{new Date(created_at).toLocaleDateString()}</TableCell>
                             <TableCell className='space-x-2 w-64'>
 
-                                <Button variant='secondary' onClick={() => handleApprove(_id.toString())}>
+                                <Button
+                                    onClick={() => handleApprove(pet._id.toString())}>
                                     同意
                                 </Button>
-                                <Button variant='outline' onClick={() => handleReject(_id.toString())}>
+
+                                <Button variant='outline' onClick={() => handleReject(pet._id.toString())}>
                                     拒绝
                                 </Button>
 
@@ -132,6 +131,6 @@ const Client = () => {
             </Table>
         </>
     )
-};
+}
 
-export default Client;
+export default Audit

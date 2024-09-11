@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.error()
     }
     const {role} = payload
-    if (role !== 'admin') {
+    if (role === 'user') {
         return bizErrResponse(Code.USER_PERMISSION_DENIED)
     }
 

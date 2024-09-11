@@ -1,94 +1,125 @@
 'use client'
 
+import React, {useState} from 'react';
 import useSWR from "swr";
-import {Fetch} from "@/lib/fetch";
 import {WithId} from "mongodb";
-import {Accounts} from "@/lib/data";
-import {Skeleton} from "@/components/ui/skeleton";
-import {ApplyList, User} from "@/app/admin/components/client";
+import {Fetch} from "@/lib/fetch";
+import toast from "react-hot-toast";
 import {Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
-import React from "react";
-import {Tooltip, TooltipContent, TooltipTrigger} from "@/components/ui/tooltip";
-import {InfoIcon} from "lucide-react";
+import {Button} from "@/components/ui/button";
+import {Accounts, Pets} from "@/lib/data";
+import {Skeleton} from "@/components/ui/skeleton";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog";
+import {Label} from "@/components/ui/label";
+import {Input} from "@/components/ui/input";
 
 const Client = () => {
-    const {data: user, mutate} = useSWR<WithId<Accounts>>('/auth/user/info', Fetch.get)
-    const {data: adoptionList} = useSWR<{
-        _id: string
-        status: 'pending' | 'approved' | 'rejected'
-        pet: {
-            name: string
-        }
-        reason: string
-        rejected_reason: string
-        created_at: string
-    }[]>(user ? '/auth/pets/adoption/my' : null, Fetch.get)
+    const [open, setOpen] = useState(false)
+    const [pet_id, setPet_id] = useState('')
+    const {data: adoptionList, mutate} = useSWR<WithId<Pets>[]>('/auth/pets/adoption', Fetch.get)
+    const {data: user} = useSWR<WithId<Accounts>>('/auth/user/info', Fetch.get)
 
-    if (!user) {
-        return <Skeleton className='h-32 rounded-xl'/>
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
+        const form = e.currentTarget as HTMLFormElement
+        const formData = new FormData(form)
+        const reason = formData.get('reason') as string
+        Fetch.post('/auth/pets/adoption', {pet_id, reason}).then(async () => {
+            toast.success('申请领养成功')
+            await mutate()
+            setOpen(false)
+        })
     }
+
+    const handleAdopt = (pet_id: string) => {
+        setPet_id(pet_id)
+        setOpen(true)
+    }
+
+    if (!user) return <Skeleton/>
 
     return (
         <>
-            <h1 className='font-bold text-2xl'>你好 {user.email}</h1>
+            <Dialog open={open} onOpenChange={setOpen}>
+                <DialogContent className="sm:max-w-[425px]">
+                    <form onSubmit={handleSubmit}>
+                        <DialogHeader>
+                            <DialogTitle>申请理由</DialogTitle>
+                            <DialogDescription>
+                                请填写申请理由
+                            </DialogDescription>
+                        </DialogHeader>
+                        <div className="grid gap-4 py-4">
+                            <div className="grid grid-cols-4 items-center gap-4">
+                                <Label htmlFor="reason" className="text-right">
+                                    申请理由
+                                </Label>
+                                <Input
+                                    id="reason"
+                                    name='reason'
+                                    defaultValue=""
+                                    className="col-span-3"
+                                    required
+                                />
+                            </div>
+                        </div>
+                        <DialogFooter>
+                            <Button type="submit">提交</Button>
+                        </DialogFooter>
+                    </form>
+                </DialogContent>
+            </Dialog>
 
             {
-                user.role === 'user' && <User status={user.status} mutate={mutate}/>
-            }
-
-            {
-                user.role === 'admin' && (
+                (
                     <>
-                        <h1 className='font-bold text-xl'>志愿者审核</h1>
-                        <ApplyList/>
-                    </>
-                )
-            }
-
-            {
-                (user.status === 'approved' || user.role === 'admin') && (
-                    <>
-                        <h1 className='font-bold text-xl'>我申请领养的</h1>
+                        <h1 className='font-bold text-2xl'>宠物领养😺🐕</h1>
                         <Table className='bg-background rounded-xl'>
-                            <TableCaption>申请列表</TableCaption>
+                            <TableCaption>宠物列表</TableCaption>
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead className="w-[100px]">申请ID</TableHead>
-                                    <TableHead>状态</TableHead>
-                                    <TableHead>宠物名</TableHead>
-                                    <TableHead>理由</TableHead>
+                                    <TableHead className="w-[100px]">宠物ID</TableHead>
+                                    <TableHead>名字</TableHead>
+                                    <TableHead>年龄</TableHead>
+                                    <TableHead>类型</TableHead>
+                                    <TableHead>备注</TableHead>
                                     <TableHead>时间</TableHead>
+                                    <TableHead>操作</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
                                 {adoptionList && adoptionList.map(({
                                                                        _id,
-                                                                       pet,
                                                                        status,
-                                                                       reason,
-                                                                       rejected_reason,
+                                                                       name,
+                                                                       age,
+                                                                       type,
+                                                                       info,
                                                                        created_at
                                                                    }) => (
                                     <TableRow key={_id.toString()}>
                                         <TableCell className="font-medium">{_id.toString()}</TableCell>
-                                        <TableCell>{
-                                            status === 'pending' ? '待审核' : status === 'approved' ? '已通过' :
-                                                status === 'rejected' ?
-                                                    <div className='flex items-center space-x-1'>
-                                                        <span className='text-red-700'>已拒绝</span>
-                                                        <Tooltip>
-                                                            <TooltipTrigger>
-                                                                <InfoIcon className='w-4 h-4 text-red-700'/>
-                                                            </TooltipTrigger>
-                                                            <TooltipContent>
-                                                                拒绝原因：{rejected_reason}
-                                                            </TooltipContent>
-                                                        </Tooltip>
-                                                    </div> : ''
-                                        }</TableCell>
-                                        <TableCell>{pet.name}</TableCell>
-                                        <TableCell>{reason}</TableCell>
+                                        <TableCell>{name}</TableCell>
+                                        <TableCell>{age}</TableCell>
+                                        <TableCell>{type}</TableCell>
+                                        <TableCell>{info}</TableCell>
                                         <TableCell>{new Date(created_at).toLocaleDateString()}</TableCell>
+                                        <TableCell className='space-x-2 w-64'>
+
+                                            <Button
+                                                disabled={status === 'adopt-pending' || status === 'adopted'}
+                                                onClick={() => handleAdopt(_id.toString())}>
+                                                {status === 'adopt-pending' ? '已申请' : status === 'adopted' ? '已领养' : '领养'}
+                                            </Button>
+
+                                        </TableCell>
                                     </TableRow>
                                 ))}
                             </TableBody>

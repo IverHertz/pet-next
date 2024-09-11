@@ -1,7 +1,10 @@
+'use client'
+
 import Image from "next/image"
 import Link from "next/link"
 import {
-    Cat,
+    BadgeInfoIcon,
+    Cat, CircleUserRoundIcon,
     Home, InfoIcon,
     Package2, PawPrint,
     Search,
@@ -25,8 +28,17 @@ import {
 } from "@/components/ui/tooltip"
 import {ReactNode} from "react";
 import {BreadcrumbResponsive} from "@/components/client/breadcrumb";
+import useSWR from "swr";
+import {WithId} from "mongodb";
+import {Accounts} from "@/lib/data";
+import {Fetch} from "@/lib/fetch";
 
 export default function Dashboard({children}: { children: ReactNode }) {
+    const {data: user} = useSWR<WithId<Accounts>>('/auth/user/info', Fetch.get)
+
+    if (!user) {
+        return <div>Loading...</div>
+    }
 
     return (
         <div className="flex min-h-screen w-full flex-col bg-muted/40">
@@ -46,10 +58,10 @@ export default function Dashboard({children}: { children: ReactNode }) {
                                 className="flex h-9 w-9 items-center justify-center rounded-lg hover:bg-accent text-accent-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
                             >
                                 <Home className="h-5 w-5"/>
-                                <span className="sr-only">主页</span>
+                                <span className="sr-only">宠物列表</span>
                             </Link>
                         </TooltipTrigger>
-                        <TooltipContent side="right">主页</TooltipContent>
+                        <TooltipContent side="right">宠物列表</TooltipContent>
                     </Tooltip>
 
                     <Tooltip>
@@ -68,28 +80,66 @@ export default function Dashboard({children}: { children: ReactNode }) {
                     <Tooltip>
                         <TooltipTrigger asChild>
                             <Link
-                                href="/admin/adoption"
+                                href="/admin/my-adoption"
                                 className="flex h-9 w-9 items-center justify-center rounded-lg hover:bg-accent text-accent-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
                             >
                                 <PawPrint className="h-5 w-5"/>
-                                <span className="sr-only">领养</span>
+                                <span className="sr-only">我领养的</span>
                             </Link>
                         </TooltipTrigger>
-                        <TooltipContent side="right">领养</TooltipContent>
+                        <TooltipContent side="right">我领养的</TooltipContent>
                     </Tooltip>
 
-                    <Tooltip>
-                        <TooltipTrigger asChild>
-                            <Link
-                                href="/admin/audit"
-                                className="flex h-9 w-9 items-center justify-center rounded-lg hover:bg-accent text-accent-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
-                            >
-                                <InfoIcon className="h-5 w-5"/>
-                                <span className="sr-only">审核</span>
-                            </Link>
-                        </TooltipTrigger>
-                        <TooltipContent side="right">审核</TooltipContent>
-                    </Tooltip>
+                    {
+                        (user.role !== 'user') && (
+                            <>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <Link
+                                            href="/admin/audit"
+                                            className="flex h-9 w-9 items-center justify-center rounded-lg hover:bg-accent text-accent-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
+                                        >
+                                            <InfoIcon className="h-5 w-5"/>
+                                            <span className="sr-only">宠物审核</span>
+                                        </Link>
+                                    </TooltipTrigger>
+                                    <TooltipContent side="right">宠物审核</TooltipContent>
+                                </Tooltip>
+
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <Link
+                                            href="/admin/audit/adoption"
+                                            className="flex h-9 w-9 items-center justify-center rounded-lg hover:bg-accent text-accent-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
+                                        >
+                                            <BadgeInfoIcon className="h-5 w-5"/>
+                                            <span className="sr-only">领养审核</span>
+                                        </Link>
+                                    </TooltipTrigger>
+                                    <TooltipContent side="right">领养审核</TooltipContent>
+                                </Tooltip>
+                            </>
+                        )
+                    }
+
+                    {
+                        user.role === 'admin' && (
+                            <>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <Link
+                                            href="/admin/audit/volunteer"
+                                            className="flex h-9 w-9 items-center justify-center rounded-lg hover:bg-accent text-accent-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
+                                        >
+                                            <CircleUserRoundIcon className="h-5 w-5"/>
+                                            <span className="sr-only">志愿者审核</span>
+                                        </Link>
+                                    </TooltipTrigger>
+                                    <TooltipContent side="right">志愿者审核</TooltipContent>
+                                </Tooltip>
+                            </>
+                        )
+                    }
 
                 </nav>
 
@@ -142,14 +192,20 @@ export default function Dashboard({children}: { children: ReactNode }) {
                             </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                            <DropdownMenuLabel>Hello</DropdownMenuLabel>
+                            <DropdownMenuLabel>{user.role}</DropdownMenuLabel>
                             <DropdownMenuSeparator/>
-                            <DropdownMenuItem>
-                                <Link href={"/admin/user"} className="w-full">
-                                    设置
-                                </Link>
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator/>
+                            {
+                                user.role === 'user' && (
+                                    <>
+                                        <DropdownMenuItem>
+                                            <Link href={"/admin/user"} className="w-full">
+                                                申请志愿者
+                                            </Link>
+                                        </DropdownMenuItem>
+                                        <DropdownMenuSeparator/>
+                                    </>
+                                )
+                            }
                             <DropdownMenuItem>
                                 <Link href={"/api/account/sign-out"} className="w-full">
                                     登出

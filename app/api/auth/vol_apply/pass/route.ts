@@ -22,7 +22,12 @@ export async function POST(request: NextRequest) {
         return bizErrResponse(Code.OTHER)
     }
     await volunteer_apply.deleteOne({_id: new ObjectId(id)})
-    await accounts.updateOne({_id: new ObjectId(u.user_id)}, {$set: {status: action === 'pass' ? 'approved' : 'rejected'}})
+    await accounts.updateOne({_id: new ObjectId(u.user_id)}, {
+        $set: {
+            status: action === 'pass' ? 'approved' : 'rejected',
+            role: action === 'pass' ? 'volunteer' : undefined
+        }
+    })
 
     return successResponse()
 }

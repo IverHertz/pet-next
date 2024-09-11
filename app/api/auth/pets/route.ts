@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
         type,
         info,
         created_at: new Date(),
-        status: role === 'admin' ? 'approved' : 'pending'
+        status: role !== 'user' ? 'approved' : 'pending'
     })
     return successResponse()
 }
