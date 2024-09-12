@@ -8,6 +8,7 @@ export interface Accounts {
     password: string
     role: 'user' | 'admin' | 'volunteer'
     status?: 'pending' | 'approved' | 'rejected'
+    avatar?: string
 }
 
 export const accounts = db.collection<Accounts>("accounts")

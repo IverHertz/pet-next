@@ -152,7 +152,7 @@ export default function Dashboard({children}: { children: ReactNode }) {
                                 className="overflow-hidden rounded-full ml-auto"
                             >
                                 <Image
-                                    src="/avatar.jpg"
+                                    src={user.avatar ? user.avatar : '/avatar.jpg'}
                                     width={640}
                                     height={639}
                                     alt="Avatar"
@@ -177,9 +177,9 @@ export default function Dashboard({children}: { children: ReactNode }) {
                                 )
                             }
                             <DropdownMenuItem>
-                                <Link href={"/api/account/sign-out"} className="w-full">
+                                <a href={"/api/account/sign-out"} className="w-full">
                                     登出
-                                </Link>
+                                </a>
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>

@@ -20,6 +20,7 @@ export async function GET(request: NextRequest) {
             Authorization: 'token ' + res.access_token,
         },
     }).then(r => r.json())
+
     const u = await accounts.findOne({
         email: user.email,
     })
@@ -37,6 +38,7 @@ export async function GET(request: NextRequest) {
             email: user.email,
             password: '',
             role: 'user',
+            avatar: user.avatar_url,
         })
         cookies().set('token', await jwtSign({
             id: i.insertedId.toHexString(),

@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
     await accounts.updateOne({_id: new ObjectId(u.user_id)}, {
         $set: {
             status: action === 'pass' ? 'approved' : 'rejected',
-            role: action === 'pass' ? 'volunteer' : undefined
+            role: action === 'pass' ? 'volunteer' : 'user'
         }
     })
 

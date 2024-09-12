@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
     const petIds = adoptionRes.map(item => item.pet_id.toHexString())
     return successResponse(res.map(item => ({
         ...item,
-        isAdopted: petIds.includes(item._id.toHexString())
+        isAdopted: petIds.includes(item._id.toHexString()),
     })))
 }
 
