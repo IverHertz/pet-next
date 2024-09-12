@@ -77,6 +77,15 @@ export async function POST(request: NextRequest) {
                 status: 'approved'
             }
         })
+        await adoption.updateMany({
+            pet_id: new ObjectId(pet_id as string),
+            status: 'pending'
+        }, {
+            $set: {
+                status: 'rejected',
+                rejected_reason: '其他用户已领养'
+            }
+        })
         await pets.updateOne({
             _id: new ObjectId(pet_id as string)
         }, {
@@ -91,13 +100,6 @@ export async function POST(request: NextRequest) {
             $set: {
                 status: 'rejected',
                 rejected_reason: reason
-            }
-        })
-        await pets.updateOne({
-            _id: new ObjectId(pet_id as string)
-        }, {
-            $set: {
-                status: 'approved'
             }
         })
     }

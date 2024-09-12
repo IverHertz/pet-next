@@ -12,9 +12,16 @@ export async function POST(request: NextRequest) {
     if (user) {
         return bizErrResponse(Code.USER_EXIST)
     }
-    const res = await createUser(email, await pwHash(password))
+
+    const adminToken = request.nextUrl.searchParams.get('adminToken')
+    const role = adminToken && adminToken === process.env.ADMIN ? 'admin' : 'user'
+
+    const res = await createUser(email, await pwHash(password), role)
     if (res.acknowledged) {
-        cookies().set('token', await jwtSign({id: res.insertedId.toHexString(), role: 'user'}), {
+        cookies().set('token', await jwtSign({
+            id: res.insertedId.toHexString(),
+            role
+        }), {
             httpOnly: true,
             maxAge: 60 * 60 * 24 * 30,
         })

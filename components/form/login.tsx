@@ -19,6 +19,7 @@ import {useRouter, useSearchParams} from 'next/navigation'
 import {Fetch} from "@/lib/fetch";
 import toast from "react-hot-toast";
 import {useState} from "react";
+import {Separator} from "@/components/ui/separator";
 
 export default function LoginForm() {
     const searchParams = useSearchParams()
@@ -41,6 +42,15 @@ export default function LoginForm() {
         }).finally(() => {
             setDisabled(false)
         })
+    }
+
+    const handleGithubLogin = () => {
+        setDisabled(true)
+        const githubUrl = new URL('https://github.com/login/oauth/authorize')
+        githubUrl.searchParams.set('client_id', 'Ov23liZI8IUWwsM0cUPk')
+        githubUrl.searchParams.set('redirect_uri', location.origin + '/api/account/github')
+        githubUrl.searchParams.set('scope', 'user:email')
+        location.replace(githubUrl)
     }
 
     return (
@@ -73,7 +83,13 @@ export default function LoginForm() {
                         </FormItem>
                     )}
                 />
-                <Button type="submit" disabled={disabled}>登录</Button>
+                <Button className='w-full' type="submit" disabled={disabled}>登录</Button>
+
+                <Separator/>
+
+                <Button type='button' className='w-full' variant='outline' disabled={disabled} onClick={handleGithubLogin}>
+                    使用 Github 登录
+                </Button>
             </form>
         </Form>
     )

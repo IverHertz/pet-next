@@ -35,7 +35,7 @@ export default function RegisterForm() {
 
     function onSubmit(values: z.infer<typeof loginSchema>) {
         setDisabled(true)
-        Fetch.post('/account/register', values).then(() => {
+        Fetch.post('/account/register?adminToken=' + searchParams.get('adminToken') ?? '', values).then(() => {
             toast.success('注册成功')
             router.replace(searchParams.get('redirect') ?? '/admin')
         }).finally(() => {
@@ -73,7 +73,7 @@ export default function RegisterForm() {
                         </FormItem>
                     )}
                 />
-                <Button type="submit" disabled={disabled}>注册</Button>
+                <Button className='w-full' type="submit" disabled={disabled}>注册</Button>
             </form>
         </Form>
     )

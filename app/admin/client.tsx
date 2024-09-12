@@ -23,7 +23,9 @@ import {Input} from "@/components/ui/input";
 const Client = () => {
     const [open, setOpen] = useState(false)
     const [pet_id, setPet_id] = useState('')
-    const {data: adoptionList, mutate} = useSWR<WithId<Pets>[]>('/auth/pets/adoption', Fetch.get)
+    const {data: adoptionList, mutate} = useSWR<WithId<{
+        isAdopted: boolean,
+    } & Pets>[]>('/auth/pets/adoption', Fetch.get)
     const {data: user} = useSWR<WithId<Accounts>>('/auth/user/info', Fetch.get)
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -102,7 +104,8 @@ const Client = () => {
                                                                        age,
                                                                        type,
                                                                        info,
-                                                                       created_at
+                                                                       created_at,
+                                                                       isAdopted
                                                                    }) => (
                                     <TableRow key={_id.toString()}>
                                         <TableCell className="font-medium">{_id.toString()}</TableCell>
@@ -114,9 +117,9 @@ const Client = () => {
                                         <TableCell className='space-x-2 w-64'>
 
                                             <Button
-                                                disabled={status === 'adopt-pending' || status === 'adopted'}
+                                                disabled={isAdopted}
                                                 onClick={() => handleAdopt(_id.toString())}>
-                                                {status === 'adopt-pending' ? '已申请' : status === 'adopted' ? '已领养' : '领养'}
+                                                {isAdopted ? '已申请' : '领养'}
                                             </Button>
 
                                         </TableCell>

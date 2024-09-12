@@ -199,12 +199,13 @@ const Client = () => {
                                     user?._id.toString() === user_id.toString() && (
                                         <>
                                             {status !== 'approved' &&
-                                                <Button variant='secondary' onClick={() => handleEdit(_id.toString())}>
+                                                <Button disabled={status === 'adopted'}
+                                                        variant='secondary' onClick={() => handleEdit(_id.toString())}>
                                                     修改
                                                 </Button>
                                             }
                                             <Button variant='outline' onClick={() => handleQuash(_id.toString())}>
-                                                {status !== 'approved' ? '撤销' : '删除'}
+                                                {(status !== 'approved') ? '撤销' : '删除'}
                                             </Button>
                                         </>
                                     )

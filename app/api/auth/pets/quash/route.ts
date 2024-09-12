@@ -1,6 +1,6 @@
 import {NextRequest, NextResponse} from "next/server";
 import {getPayload} from "@/app/api/auth/vol_apply/util";
-import {pets} from "@/lib/data";
+import {adoption, pets} from "@/lib/data";
 import {ObjectId} from "mongodb";
 import {bizErrResponse, Code, successResponse} from "@/lib/utils";
 
@@ -17,5 +17,6 @@ export async function POST(request: NextRequest) {
         return bizErrResponse(Code.PET_NOT_FOUND)
     }
     await pets.deleteOne({_id: new ObjectId(pet_id)})
+    await adoption.deleteMany({pet_id: new ObjectId(pet_id)})
     return successResponse()
 }

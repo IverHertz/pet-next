@@ -26,7 +26,7 @@ export interface Pets {
     age: number
     type: string
     info?: string
-    status: 'pending' | 'approved' | 'rejected' | 'adopted' | 'adopt-pending'
+    status: 'pending' | 'approved' | 'rejected' | 'adopted'
     reason?: string
     created_at: Date
 }
@@ -52,6 +52,6 @@ export const isEmailExist = async (email: string) => {
     return !!(await accounts.findOne({email}))
 }
 
-export const createUser = async (email: string, password: string) => {
-    return accounts.insertOne({email, password, role: 'user'})
+export const createUser = async (email: string, password: string, role: 'admin' | 'user') => {
+    return accounts.insertOne({email, password, role})
 }
