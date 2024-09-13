@@ -101,7 +101,6 @@ const Client = () => {
                             <TableBody>
                                 {adoptionList && adoptionList.map(({
                                                                        _id,
-                                                                       status,
                                                                        name,
                                                                        age,
                                                                        type,
