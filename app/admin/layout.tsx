@@ -6,7 +6,7 @@ import {
     BadgeInfoIcon,
     Cat, CircleUserRoundIcon,
     Home, InfoIcon,
-    PawPrint,
+    PawPrint, Search,
 } from "lucide-react"
 
 import {Button} from "@/components/ui/button"
@@ -30,6 +30,7 @@ import {WithId} from "mongodb";
 import {Accounts} from "@/lib/data";
 import {Fetch} from "@/lib/fetch";
 import {usePathname} from "next/navigation";
+import {Input} from "@/components/ui/input";
 
 export default function Dashboard({children}: { children: ReactNode }) {
     const {data: user} = useSWR<WithId<Accounts>>('/auth/user/info', Fetch.get)
@@ -144,57 +145,79 @@ export default function Dashboard({children}: { children: ReactNode }) {
 
                     <BreadcrumbResponsive/>
 
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button
-                                variant="outline"
-                                size="icon"
-                                className="overflow-hidden rounded-full ml-auto"
-                            >
-                                <Image
-                                    src={user.avatar ? user.avatar : '/avatar.jpg'}
-                                    width={640}
-                                    height={639}
-                                    alt="Avatar"
+                    <div className='ml-auto flex space-x-4'>
+                        <div className={`relative flex-1 md:grow-0 ${pathname === '/admin' ? 'block' : 'hidden'}`}>
+                            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground"/>
+                            <Input
+                                type="search"
+                                placeholder="Search..."
+                                className="w-full rounded-lg bg-background pl-8 md:w-[200px] lg:w-[336px]"
+                                onKeyDown={event => {
+                                    if (event.key === 'Enter') {
+                                        const search = event.currentTarget.value
+                                        if (search) {
+                                            history.pushState(null, '', `/admin?search=${search}`)
+                                        } else {
+                                            history.pushState(null, '', `/admin`)
+                                        }
+                                    }
+                                }}
+                            />
+                        </div>
+
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button
+                                    variant="outline"
+                                    size="icon"
                                     className="overflow-hidden rounded-full"
-                                    priority
-                                />
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                            <DropdownMenuLabel>{user.role}</DropdownMenuLabel>
-                            <DropdownMenuSeparator/>
-                            {
-                                user.role === 'user' && (
-                                    <>
-                                        <DropdownMenuItem>
-                                            <a href={"/admin/user"} className="w-full">
-                                                申请志愿者
-                                            </a>
-                                        </DropdownMenuItem>
-                                        <DropdownMenuSeparator/>
-                                    </>
-                                )
-                            }
-                            <DropdownMenuItem>
-                                <a href={"/admin/user/setting"} className="w-full">
-                                    设置
-                                </a>
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator/>
-                            <DropdownMenuItem>
-                                <a href={"/api/account/log-out"} className="w-full">
-                                    注销
-                                </a>
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator/>
-                            <DropdownMenuItem>
-                                <a href={"/api/account/sign-out"} className="w-full">
-                                    登出
-                                </a>
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
+                                >
+                                    <Image
+                                        src={user.avatar ? user.avatar : '/avatar.jpg'}
+                                        width={640}
+                                        height={639}
+                                        alt="Avatar"
+                                        className="overflow-hidden rounded-full"
+                                        priority
+                                    />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                                <DropdownMenuLabel>{user.role}</DropdownMenuLabel>
+                                <DropdownMenuSeparator/>
+                                {
+                                    user.role === 'user' && (
+                                        <>
+                                            <DropdownMenuItem>
+                                                <a href={"/admin/user"} className="w-full">
+                                                    申请志愿者
+                                                </a>
+                                            </DropdownMenuItem>
+                                            <DropdownMenuSeparator/>
+                                        </>
+                                    )
+                                }
+                                <DropdownMenuItem>
+                                    <a href={"/admin/user/setting"} className="w-full">
+                                        设置
+                                    </a>
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator/>
+                                <DropdownMenuItem>
+                                    <a href={"/api/account/log-out"} className="w-full">
+                                        注销
+                                    </a>
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator/>
+                                <DropdownMenuItem>
+                                    <a href={"/api/account/sign-out"} className="w-full">
+                                        登出
+                                    </a>
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </div>
+
                 </header>
 
                 <main

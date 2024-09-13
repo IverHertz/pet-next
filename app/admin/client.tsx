@@ -19,13 +19,15 @@ import {
 } from "@/components/ui/dialog";
 import {Label} from "@/components/ui/label";
 import {Input} from "@/components/ui/input";
+import {useSearchParams} from "next/navigation";
 
 const Client = () => {
     const [open, setOpen] = useState(false)
     const [pet_id, setPet_id] = useState('')
+    const searchParams = useSearchParams()
     const {data: adoptionList, mutate} = useSWR<WithId<{
         isAdopted: boolean,
-    } & Pets>[]>('/auth/pets/adoption', Fetch.get)
+    } & Pets>[]>(`/auth/pets/adoption?${searchParams.toString()}`, Fetch.get)
     const {data: user} = useSWR<WithId<Accounts>>('/auth/user/info', Fetch.get)
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -121,6 +123,14 @@ const Client = () => {
                                                 onClick={() => handleAdopt(_id.toString())}>
                                                 {isAdopted ? '已申请' : '领养'}
                                             </Button>
+
+                                            {
+                                                user.role !== 'user' && (
+                                                    <Button variant='outline'>
+                                                        修改
+                                                    </Button>
+                                                )
+                                            }
 
                                         </TableCell>
                                     </TableRow>

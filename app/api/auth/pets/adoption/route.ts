@@ -10,8 +10,15 @@ export async function GET(request: NextRequest) {
         return NextResponse.error()
     }
 
+    const search = request.nextUrl.searchParams.get('search')
     const res = await pets.find({
-        status: 'approved'
+        status: 'approved',
+        ...(search ? {
+            type: {
+                $regex: search,
+                $options: 'i'
+            }
+        } : {})
     }).sort({created_at: -1}).toArray()
     const adoptionRes = await adoption.find({
         user_id: new ObjectId(payload.id)
