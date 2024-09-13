@@ -168,14 +168,26 @@ export default function Dashboard({children}: { children: ReactNode }) {
                                 user.role === 'user' && (
                                     <>
                                         <DropdownMenuItem>
-                                            <Link href={"/admin/user"} className="w-full">
+                                            <a href={"/admin/user"} className="w-full">
                                                 申请志愿者
-                                            </Link>
+                                            </a>
                                         </DropdownMenuItem>
                                         <DropdownMenuSeparator/>
                                     </>
                                 )
                             }
+                            <DropdownMenuItem>
+                                <a href={"/admin/user/setting"} className="w-full">
+                                    设置
+                                </a>
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator/>
+                            <DropdownMenuItem>
+                                <a href={"/api/account/log-out"} className="w-full">
+                                    注销
+                                </a>
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator/>
                             <DropdownMenuItem>
                                 <a href={"/api/account/sign-out"} className="w-full">
                                     登出

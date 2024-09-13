@@ -25,6 +25,15 @@ export async function GET(request: NextRequest) {
         email: user.email,
     })
     if (u) {
+        if (u.avatar !== user.avatar_url) {
+            await accounts.updateOne({
+                _id: u._id,
+            }, {
+                $set: {
+                    avatar: user.avatar_url,
+                },
+            })
+        }
         cookies().set('token', await jwtSign({
             id: u._id.toHexString(),
             role: u.role,
